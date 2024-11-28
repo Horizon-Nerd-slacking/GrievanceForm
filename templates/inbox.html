@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Inbox</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('/static/background.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #fff;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        td {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Faculty Inbox</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Roll Number</th>
+                    <th>Username</th>
+                    <th>Hostel</th>
+                    <th>Block</th>
+                    <th>Room</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grievance in grievances %}
+                <tr>
+                    <td>{{ grievance.roll_number }}</td>
+                    <td>{{ grievance.username }}</td>
+                    <td>{{ grievance.hostel_building }}</td>
+                    <td>{{ grievance.block }}</td>
+                    <td>{{ grievance.room }}</td>
+                    <td>{{ grievance.description }}</td>
+                    <td>{{ grievance.status }}</td>
+                    <td>
+                        {% if grievance.status == 'pending' %}
+                        <form action="/mark_taken" method="post" style="display:inline;">
+                            <input type="hidden" name="grievance_id" value="{{ grievance.id }}">
+                            <button type="submit">Mark Taken</button>
+                        </form>
+                        {% elif grievance.status == 'taken' %}
+                        <form action="/mark_completed" method="post" style="display:inline;">
+                            <input type="hidden" name="grievance_id" value="{{ grievance.id }}">
+                            <button type="submit">Mark Completed</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
