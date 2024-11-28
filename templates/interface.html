@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grievance Form</title>
+    <style>
+        /* Background Styling */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('/static/background.jpg');
+            /* Use the background image */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #fff;
+            /* White text for better contrast */
+        }
+
+        /* Centered and Styled Container */
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            /* Semi-transparent black */
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Styling for User Info Section */
+        .user-info {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+
+        .user-info-item {
+            margin-bottom: 10px;
+        }
+
+        /* Flexbox for Form Group */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 1.2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        select,
+        input[type="text"],
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        select:focus,
+        input:focus,
+        textarea:focus {
+            outline: none;
+            box-shadow: 0 0 5px #007bff;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            /* Full width button */
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Prevent textarea resize */
+        textarea {
+            resize: none;
+        }
+
+        /* Styling for Form Inputs and Selects */
+        .form-group input[type="text"],
+        .form-group select,
+        .form-group textarea {
+            display: inline-block;
+            width: calc(100% - 20px);
+            /* Adjust width to fit labels and inputs */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="{{ url_for('your_grievances') }}" class="your-grievances-btn">Your Grievances</a>
+
+        <div class="container">
+            <h1>Grievance Form</h1>
+
+            <!-- User Info Section -->
+            <div class="user-info">
+                <div class="user-info-item">
+                    <p><strong>Username:</strong> {{ username }}</p>
+                </div>
+                <div class="user-info-item">
+                    <p><strong>Roll Number:</strong> {{ roll_number }}</p>
+                </div>
+            </div>
+            <!-- Form Section -->
+            <form action="/submit_grievance" method="post" enctype="multipart/form-data">
+                <!-- Grievance Type -->
+                <div class="form-group">
+                    <label for="grievanceType" class="user-info-label">Select Grievance:</label>
+                    <select id="grievanceType" name="grievanceType" required>
+                        <option value="" disabled selected>Select grievance type</option>
+                        <option value="electric">Electric Work</option>
+                        <option value="furniture">Furniture Work</option>
+                        <option value="cleaning">Cleaning and Washroom</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Hostel Building -->
+                <div class="form-group">
+                    <label for="hostelBuilding" class="user-info-label">Select Hostel Building:</label>
+                    <select id="hostelBuilding" name="hostelBuilding" required>
+                        <option value="" disabled selected>Select hostel building</option>
+                        <option value="Parmar Bhavan">Parmaar Bhavan</option>
+                        <option value="Shashtri Bhavan">Shashtri Bhavan</option>
+                        <option value="Gita Bhavan">Gita Bhavan</option>
+                        <option value="Azad Bhavan">Azad Bhavan</option>
+                    </select>
+                </div>
+
+                <!-- Blocks -->
+                <div class="form-group">
+                    <label for="Blocks" class="user-info-label">Select Block:</label>
+                    <select id="Blocks" name="Blocks" required>
+                        <option value="" disabled selected>Select Block:</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                    </select>
+                </div>
+
+                <!-- Room Number -->
+                <div class="form-group">
+                    <label for="roomNumber" class="user-info-label">Room Number:</label>
+                    <input type="text" id="roomNumber" name="roomNumber" placeholder="Enter room number" required>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description" class="user-info-label">Description:</label>
+                    <textarea id="description" name="description" placeholder="Enter details" rows="4"
+                        required></textarea>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="form-group">
+                    <label for="imageUpload" class="user-info-label">Upload an Image (Optional):</label>
+                    <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <button type="submit" class="submit-btn">Submit Grievance</button>
+                </div>
+            </form>
+        </div>
+        {% for grievance_id, status in grievance_confirmations.items() %}
+        {% if (status is mapping and status.get('roll_number') == roll_number and status.get('status') ==
+        'waiting_confirmation') %}
+        Click yes to confirm that the work was completed.
+        <form action="{{ url_for('confirm_grievance') }}" method="POST">
+            <input type="hidden" name="grievance_id" value="{{ grievance_id }}">
+            <button type="submit" name="confirmation" value="yes">Yes</button>
+            <button type="submit" name="confirmation" value="no">No</button>
+        </form>
+       
+        {% endif %}
+        {% endfor %}
+</body>
+
+</html>
